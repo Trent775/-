@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЭРГ ACADEMY PRO | Экспертный анализ муфт</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <h1 class="splash-title">ЭРГ <span class="accent-orange">ACADEMY</span> PRO</h1>
+            <p class="splash-subtitle">Инженерная платформа функционально-стоимостного анализа кабельной арматуры</p>
+            <div class="splash-divider"></div>
+            <button id="btn-start" class="btn-start">ВКЛЮЧИТЬ СИСТЕМУ И НАЧАТЬ ОБУЧЕНИЕ</button>
+            <p class="splash-note">Рекомендуется включить звук. Обучение сопровождается аудио-ассистентом.</p>
+        </div>
+    </div>
+
+    <div id="app-container" class="app-container" style="display: none;">
+        
+        <header class="app-header">
+            <div class="logo">ЭРГ <span class="accent-orange">PRO</span></div>
+            
+            <div class="muff-selector-wrapper">
+                <span class="selector-label">ТИП МУФТЫ:</span>
+                <select id="global-muff-select" class="muff-select">
+                    <option value="3stp10">3СТп-10 (Кабельная муфта 10 кВ БПИ)</option>
+                </select>
+            </div>
+        </header>
+
+        <nav class="tabs-system">
+            <button class="tab-btn active" data-target="tab-learning">РАЗБОР КОМПЛЕКТА (ОБУЧЕНИЕ)</button>
+            <button class="tab-btn" data-target="tab-analysis">ДЕТАЛЬНЫЙ АНАЛИЗ</button>
+            <button class="tab-btn" data-target="tab-ratings">РЕЙТИНГ ПРОИЗВОДИТЕЛЕЙ</button>
+        </nav>
+
+        <main class="modules-container">
+            
+            <section id="tab-learning" class="module-section active">
+                <div class="learning-layout">
+                    <div class="groups-panel glass-panel">
+                        <h3 class="panel-title">ИНЖЕНЕРНЫЕ УЗЛЫ</h3>
+                        <div id="learning-groups-list" class="groups-list"></div>
+                    </div>
+
+                    <div class="visualization-panel glass-panel">
+                        <div class="component-header">
+                            <h2 id="learning-comp-name">Выберите узел для анализа</h2>
+                            <span id="learning-comp-group" class="badge">Группа не выбрана</span>
+                        </div>
+                        <div class="image-wrapper" id="image-wrapper">
+                            <img id="learning-image" src="kit.jpg" alt="Схема муфты">
+                            <div id="hotspots-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="info-panel glass-panel">
+                        <h3 class="panel-title">ИНЖЕНЕРНАЯ СПЕЦИФИКАЦИЯ</h3>
+                        <div class="info-block">
+                            <div class="info-label">НАЗНАЧЕНИЕ В СИСТЕМЕ</div>
+                            <div class="info-value" id="learning-purpose">Нажмите на любую пульсирующую точку на схеме...</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="info-label">ПРИНЦИП РАБОТЫ</div>
+                            <div class="info-value" id="learning-function">—</div>
+                        </div>
+                        <div class="info-block critical-block">
+                            <div class="info-label">РИСК ОТКАЗА / ЭКОНОМИИ КОНКУРЕНТА</div>
+                            <div class="info-value" id="learning-failure">—</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="info-label">ОБОСНОВАНИЕ КРИТИЧНОСТИ</div>
+                            <div class="info-value" id="learning-criticality">—</div>
+                        </div>
+                        <div class="info-block" style="border-left-color: #ffd700;">
+                            <div class="info-label">НОРМАТИВНАЯ БАЗА (ЭТАЛОН)</div>
+                            <div class="info-value data-value" id="learning-norms">—</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-analysis" class="module-section"></section>
+
+            <section id="tab-ratings" class="module-section"></section>
+        </main>
+    </div>
+
+    <script src="js/audio.js"></script>
+    <script src="data/muff_3stp10.js"></script> 
+    <script src="js/learning.js"></script> 
+    <script src="js/analysis.js"></script>
+    <script src="js/ratings.js"></script> 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnStart = document.getElementById('btn-start');
+            if (btnStart) {
+                btnStart.addEventListener('click', () => {
+                    const splash = document.getElementById('splash-screen');
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        document.getElementById('app-container').style.display = 'flex';
+                        if (window.AudioEngine) AudioEngine.playSequence(['welcome', 'muff_3stp10_intro', 'learning']);
+                    }, 500);
+                });
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.module-section').forEach(s => s.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const targetId = e.target.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    if (window.AudioEngine) {
+                        if (targetId === 'tab-analysis') AudioEngine.playOnce('analysis');
+                        if (targetId === 'tab-ratings') AudioEngine.playOnce('ratings');
+                        if (targetId === 'tab-learning') AudioEngine.stop();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

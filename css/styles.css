@@ -1,0 +1,242 @@
+:root {
+    --bg-main: #0B0E14;
+    --bg-panel: #151A22;
+    --accent-blue: #00ccff;
+    --accent-orange: #FF6B00;
+    --text-main: #E2E8F0;
+    --text-muted: #8B9BB4;
+    --border-color: rgba(255, 255, 255, 0.1); /* Сделали рамки чуть контрастнее */
+    
+    /* Новые переменные шрифтов */
+    --font-main: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+body { background-color: var(--bg-main); color: var(--text-main); overflow: hidden; height: 100vh; }
+.accent-orange { color: var(--accent-orange); }
+
+/* Выделение технических данных (цифры) моноширинным шрифтом */
+.data-value, .fact-item, .comp-badge, .status-tag { font-family: var(--font-mono); }
+
+/* ================= СТАРТОВЫЙ ЭКРАН ================= */
+.splash-screen {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: var(--bg-main);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 30px 30px;
+    display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.6s ease-out;
+}
+/* Стеклянный эффект для стартового окна */
+.splash-content {
+    background: rgba(21, 26, 34, 0.6); padding: 50px; border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15); text-align: center; max-width: 700px;
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.splash-title { font-size: 3.2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+.splash-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px; font-weight: 400; line-height: 1.5; }
+.splash-divider { height: 2px; background: linear-gradient(90deg, transparent, var(--accent-orange), transparent); margin: 0 auto 30px auto; width: 60%; }
+.btn-start { 
+    background: linear-gradient(135deg, var(--accent-orange), #ff4500); color: #fff; 
+    border: none; padding: 18px 36px; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px;
+    border-radius: 8px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4); 
+}
+.btn-start:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 30px rgba(255, 107, 0, 0.6); }
+.splash-note { margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); opacity: 0.8; }
+
+/* ================= ОСНОВНОЙ ИНТЕРФЕЙС ================= */
+.app-container { display: flex; flex-direction: column; height: 100vh; }
+.app-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: var(--bg-panel); border-bottom: 1px solid var(--border-color); flex-shrink: 0; z-index: 10; }
+.logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+.muff-selector-wrapper { display: flex; align-items: center; gap: 15px; }
+.selector-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; }
+.muff-select { 
+    background: rgba(0,0,0,0.5); color: var(--text-main); border: 1px solid rgba(0,204,255,0.4); 
+    padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; font-weight: 600; 
+    outline: none; cursor: pointer; transition: all 0.2s;
+}
+.muff-select:hover { border-color: var(--accent-blue); box-shadow: 0 0 10px rgba(0,204,255,0.2); }
+
+/* СИСТЕМА ВКЛАДОК */
+.tabs-system { display: flex; background: var(--bg-panel); border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; z-index: 10; }
+.tab-btn { 
+    flex: 1; background: transparent; color: var(--text-muted); border: none; 
+    padding: 18px; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px; 
+    cursor: pointer; transition: all 0.3s ease; border-bottom: 3px solid transparent; 
+}
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
+.tab-btn.active { color: var(--accent-orange); border-bottom-color: var(--accent-orange); background: linear-gradient(180deg, transparent 0%, rgba(255, 107, 0, 0.1) 100%); }
+
+/* КОНТЕЙНЕРЫ МОДУЛЕЙ */
+.modules-container { flex: 1; position: relative; overflow: hidden; background: url('../kit.jpg') center/cover no-repeat; }
+/* Делаем легкое затемнение фона, чтобы UI выделялся */
+.modules-container::before { content: ''; position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(11, 14, 20, 0.92); z-index: 0; }
+
+.module-section { 
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+    opacity: 0; pointer-events: none; transition: opacity 0.4s ease; 
+    display: flex; flex-direction: column; 
+    overflow-y: auto; overflow-x: hidden; padding: 0; z-index: 1;
+}
+.module-section.active { opacity: 1; pointer-events: auto; }
+
+#tab-learning { padding: 20px; }
+#tab-ratings { padding: 20px; }
+#tab-analysis .analysis-header { padding: 20px 20px 0 20px; margin-bottom: 20px; }
+#tab-analysis .accordions-wrapper { padding: 0 20px 40px 20px; }
+
+/* Кастомизация глобального скроллбара */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }
+
+/* ================= МОДУЛЬ 1: ОБУЧЕНИЕ ================= */
+.learning-layout { display: grid; grid-template-columns: 350px 1fr 400px; gap: 20px; height: 100%; min-height: 0; }
+
+/* СТЕКЛЯННЫЕ ПАНЕЛИ (Glassmorphism) */
+.glass-panel { 
+    background: rgba(21, 26, 34, 0.5); 
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    border-radius: 12px; padding: 20px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.groups-panel, .info-panel { display: flex; flex-direction: column; overflow-y: auto; }
+.visualization-panel { display: flex; flex-direction: column; min-height: 0; }
+.panel-title { font-size: 1rem; font-weight: 800; color: var(--text-muted); letter-spacing: 1.5px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-shrink: 0; text-transform: uppercase; }
+
+/* АККОРДЕОН ОБУЧЕНИЯ */
+.groups-list { display: flex; flex-direction: column; gap: 8px; }
+.group-container { border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s; }
+.group-header-btn { width: 100%; text-align: left; background: transparent; border: none; padding: 15px 16px; color: #fff; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; border-radius: 8px; letter-spacing: 0.5px; }
+.group-header-btn:hover { background: rgba(255,255,255,0.05); }
+.group-container.active { border-color: rgba(255,107,0,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.group-container.active .group-header-btn { color: var(--accent-orange); background: rgba(255, 107, 0, 0.08); border-radius: 8px 8px 0 0; }
+
+.component-sublist { display: none; padding: 8px 0 12px 0; background: rgba(0,0,0,0.2); border-radius: 0 0 8px 8px; }
+.group-container.active .component-sublist { display: flex; flex-direction: column; }
+
+/* АНИМАЦИЯ КНОПОК МЕНЮ */
+.sub-comp-btn { 
+    width: 100%; text-align: left; background: transparent; border: none; 
+    padding: 10px 16px 10px 30px; color: var(--text-muted); font-size: 0.85rem; 
+    cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+    border-left: 2px solid transparent; 
+}
+.sub-comp-btn:hover { color: #fff; background: rgba(255,255,255,0.03); transform: translateX(4px); }
+.sub-comp-btn.active { color: var(--accent-blue); background: rgba(0, 204, 255, 0.05); border-left-color: var(--accent-blue); font-weight: 600; transform: translateX(4px); }
+
+/* ИЗОБРАЖЕНИЕ И ТОЧКИ */
+.image-wrapper { position: relative; flex: 1; background: rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 0; border: 1px solid rgba(255,255,255,0.05); }
+.image-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+.hotspot { position: absolute; width: 28px; height: 28px; transform: translate(-50%, -50%); cursor: pointer; z-index: 10; }
+.hotspot-dot { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: var(--accent-orange); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 15px var(--accent-orange); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.hotspot-ring { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; border: 2px solid var(--accent-orange); border-radius: 50%; transform: translate(-50%, -50%); animation: pulse-ring 2s infinite; }
+.hotspot:hover .hotspot-dot, .hotspot.active .hotspot-dot { transform: translate(-50%, -50%) scale(1.6); background: #fff; box-shadow: 0 0 20px #fff; }
+@keyframes pulse-ring { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; } }
+
+/* ПАНЕЛЬ ИНФОРМАЦИИ */
+.info-block { background: rgba(0,0,0,0.4); padding: 18px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid var(--accent-blue); flex-shrink: 0; transition: transform 0.3s ease; }
+.info-block:hover { transform: translateX(-2px); background: rgba(0,0,0,0.6); }
+.info-block.critical-block { border-left-color: var(--accent-orange); }
+.info-label { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.info-value { font-size: 0.95rem; line-height: 1.6; color: #fff; }
+
+/* ================= МОДУЛЬ 2: АНАЛИЗ И РЕЙТИНГИ ================= */
+.analysis-header { margin-bottom: 20px; }
+
+.accordions-wrapper { display: flex; flex-direction: column; gap: 15px; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+.accordion-item { 
+    background: rgba(21, 26, 34, 0.6); 
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08); 
+    border-radius: 12px; 
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4); 
+    overflow: visible !important; 
+    transition: transform 0.3s ease;
+}
+
+.accordion-btn { 
+    width: 100%; display: flex; justify-content: space-between; align-items: center; 
+    padding: 20px 25px; background: rgba(0, 0, 0, 0.3); border: none; color: #fff; 
+    font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: background 0.3s; 
+    border-radius: 12px; letter-spacing: 0.5px;
+}
+.accordion-btn:hover { background: rgba(255, 107, 0, 0.15); }
+.accordion-item.open .accordion-btn { 
+    color: var(--accent-orange); border-bottom: 1px solid rgba(255,255,255,0.05); 
+    border-radius: 12px 12px 0 0; background: rgba(0,0,0,0.5);
+}
+
+.accordion-body { 
+    display: none; padding: 20px; background: rgba(0, 0, 0, 0.2); 
+    border-radius: 0 0 12px 12px; 
+    overflow: visible !important; 
+}
+.accordion-item.open .accordion-body { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+.comp-count { font-size: 0.8rem; font-family: var(--font-mono); color: var(--text-muted); font-weight: normal; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; }
+
+/* ТАБЛИЦА АНАЛИЗА */
+.table-container { width: 100%; overflow: visible !important; }
+.analysis-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 1000px; }
+
+/* СТЕКЛЯННЫЙ ЛИПКИЙ ЗАГОЛОВОК */
+.analysis-table th { 
+    text-align: left; padding: 18px 15px; color: var(--text-muted); 
+    font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    
+    position: sticky; top: 0px; z-index: 100; 
+    
+    /* Эффект матового стекла для шапки при скроллинге */
+    background: rgba(15, 19, 25, 0.85); 
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 0 -2px 0 var(--accent-blue), 0 10px 20px -10px rgba(0,0,0,0.8); 
+}
+
+.analysis-table td { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.3s; }
+.analysis-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+.comp-info-cell { width: 20%; vertical-align: top; padding: 18px 15px; background: rgba(0,0,0,0.2); border-right: 1px solid rgba(255,255,255,0.03); }
+.comp-name { font-size: 1.05rem; font-weight: 600; color: #fff; margin-bottom: 8px; }
+.comp-badge { display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: rgba(0,204,255,0.1); color: var(--accent-blue); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;}
+
+.mfr-cell { width: 16%; vertical-align: top; padding: 18px 15px; border-top: 3px solid transparent; transition: background 0.3s; }
+.mfr-cell:hover { background: rgba(255,255,255,0.03); }
+.score-high { border-top-color: #00cc66; background: linear-gradient(180deg, rgba(0,204,102,0.05) 0%, transparent 120px); }
+.score-mid { border-top-color: #ffaa00; background: linear-gradient(180deg, rgba(255,170,0,0.05) 0%, transparent 120px); }
+.score-low { border-top-color: #ff6666; background: linear-gradient(180deg, rgba(255,102,102,0.05) 0%, transparent 120px); }
+
+.status-tag { display: inline-block; font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; margin-bottom: 15px; letter-spacing: 1px; text-transform: uppercase;}
+.status-high { background: rgba(0, 204, 102, 0.15); color: #00cc66; border: 1px solid rgba(0,204,102,0.3); }
+.status-mid { background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.3); }
+.status-low { background: rgba(255, 102, 102, 0.15); color: #ff6666; border: 1px solid rgba(255,102,102,0.3); }
+
+.fact-item { font-size: 0.8rem; color: #fff; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 4px; display: inline-block; margin-right: 6px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.2s; }
+.fact-item:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+.cell-comment { font-size: 0.85rem; color: #ccc; margin-top: 15px; line-height: 1.5; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 12px; }
+
+/* ИНТЕРАКТИВНЫЙ ИНСАЙТ В ТАБЛИЦЕ */
+.insight-row td { padding: 0 !important; border: none !important; }
+.insight-btn { 
+    width: 100%; display: flex; justify-content: flex-start; align-items: center; gap: 12px;
+    padding: 12px 20px; background: rgba(0, 204, 255, 0.05); border: none; border-left: 4px solid var(--accent-blue);
+    color: var(--accent-blue); font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease;
+}
+.insight-btn:hover { background: rgba(0, 204, 255, 0.12); padding-left: 25px; }
+.insight-btn span.arrow { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.insight-row.open .insight-btn span.arrow { transform: rotate(180deg); }
+
+.insight-body { 
+    display: none; padding: 20px 25px; background: rgba(0, 0, 0, 0.5); 
+    border-left: 4px solid var(--accent-blue); border-bottom: 1px solid rgba(0,204,255,0.15);
+    color: #ddd; font-size: 0.9rem; line-height: 1.6; text-align: justify;
+}
+.insight-row.open .insight-body { display: block; animation: fadeIn 0.4s ease; }
